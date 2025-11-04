@@ -1,4 +1,4 @@
-name: Build and Deploy Jekyll Site
+name: Build Jekyll Site
 
 on:
   push:
@@ -19,29 +19,12 @@ jobs:
         bundler-cache: true
         
     - name: Install dependencies
-      run: |
-        bundle config path vendor/bundle
-        bundle install --jobs 4 --retry 3
-        
+      run: bundle install
+      
     - name: Build site
       run: bundle exec jekyll build
       
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: ./_site
-
-  deploy:
-    if: github.ref == 'refs/heads/main'
-    needs: build
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    - name: Show build output
+      run: |
+        echo "Build completed successfully!"
+        ls -la _site/ | head -10
